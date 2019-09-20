@@ -29,12 +29,15 @@ import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.ProcessorUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
@@ -73,7 +76,10 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     AsyncContext asyncContext = req.startAsync();
     ServletInputStream servletInputStream = req.getInputStream();
-    SfWebhookRequestBodyReadListener readListener = new SfWebhookRequestBodyReadListener(asyncContext, httpClient);
+    // 请求是否通过 Gzip 压缩
+    boolean isGzip = "application/octet-stream".equals(req.getContentType());
+    SfWebhookRequestBodyReadListener readListener =
+        new SfWebhookRequestBodyReadListener(asyncContext, httpClient, isGzip);
     servletInputStream.setReadListener(readListener);
   }
 
@@ -86,11 +92,13 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
     private AsyncContext asyncContext;
     private ByteArrayOutputStream receiveBuffer;
     private HttpClient httpClient;
+    private boolean isGzip;
 
-    SfWebhookRequestBodyReadListener(AsyncContext asyncContext, HttpClient httpClient) {
+    SfWebhookRequestBodyReadListener(AsyncContext asyncContext, HttpClient httpClient, boolean isGzip) {
       this.asyncContext = asyncContext;
       this.receiveBuffer = new ByteArrayOutputStream(asyncContext.getRequest().getContentLength());
       this.httpClient = httpClient;
+      this.isGzip = isGzip;
     }
 
     @Override
@@ -120,6 +128,16 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
       }
 
       byte[] requestBodyBytes = receiveBuffer.toByteArray();
+      if (isGzip) {
+        try (GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(requestBodyBytes))) {
+          requestBodyBytes = IO.readBytes(gzip);
+        } catch (IOException e) {
+          log.warn("can not decompress gzip request body bytes", e);
+          ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE_415);
+          asyncContext.complete();
+          return;
+        }
+      }
 
       if (!SfUtils.checkSignature((HttpServletRequest) asyncContext.getRequest(), requestBodyBytes,
           secretTokenForSignatureCheck)) {
