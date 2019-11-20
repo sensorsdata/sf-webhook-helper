@@ -49,6 +49,11 @@ public class SfWebhookRequestEntry {
 
 
   /**
+   * 发送 ID
+   */
+  String sendId;
+
+  /**
    * 用户的 ID 信息
    * https://www.sensorsdata.cn/manual/user_identify.html
    */
