@@ -33,6 +33,7 @@ import org.eclipse.jetty.util.IO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +62,12 @@ public class SfWebhookServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
     byte[] requestBodyBytes;
     try {
-      requestBodyBytes = IO.readBytes(req.getInputStream());
+      // 判断请求是否通过 Gzip 压缩
+      if ("application/octet-stream".equals(req.getContentType())) {
+        requestBodyBytes = IO.readBytes(new GZIPInputStream(req.getInputStream()));
+      } else {
+        requestBodyBytes = IO.readBytes(req.getInputStream());
+      }
       if (requestBodyBytes == null || requestBodyBytes.length == 0) {
         throw new IOException("request body is blank");
       }
