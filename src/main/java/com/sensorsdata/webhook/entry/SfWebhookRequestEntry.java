@@ -80,6 +80,8 @@ public class SfWebhookRequestEntry {
     Integer sfPlanId;
     Integer sfPlanAudienceId;
     Integer sfPlanStrategyId;
+    Integer sfStrategyUnitId;
+    String sfPlanType;
   }
 }
 
