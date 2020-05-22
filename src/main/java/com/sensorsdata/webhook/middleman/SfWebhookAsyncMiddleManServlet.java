@@ -19,6 +19,7 @@ package com.sensorsdata.webhook.middleman;
 import com.sensorsdata.webhook.common.SfUtils;
 import com.sensorsdata.webhook.entry.SfWebhookRequestEntry;
 import com.sensorsdata.webhook.entry.SfWebhookResponseEntry;
+import com.sensorsdata.webhook.exception.AbortException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -164,6 +165,11 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
       Request newRequest;
       try {
         newRequest = middleManProcessor.handleWebhookRequest(requestEntries, httpClient);
+      } catch (AbortException e){
+        log.warn("abort exception.", e);
+        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.OK_200);
+        asyncContext.complete();
+        return;
       } catch (Exception e) {
         log.warn("handle webhook request with exception. [requests='{}']", requestEntries);
         log.warn("exception detail", e);
