@@ -174,12 +174,6 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
 
       if (newRequest == null) {
         log.warn("request is null. [requests='{}']", requestEntries);
-        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        asyncContext.complete();
-        return;
-      }
-
-      if (newRequest.getHeaders().contains("Skip-Request", "True")) {
         ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.OK_200);
         asyncContext.complete();
         return;
