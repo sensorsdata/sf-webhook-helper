@@ -19,7 +19,6 @@ package com.sensorsdata.webhook.middleman;
 import com.sensorsdata.webhook.common.SfUtils;
 import com.sensorsdata.webhook.entry.SfWebhookRequestEntry;
 import com.sensorsdata.webhook.entry.SfWebhookResponseEntry;
-import com.sensorsdata.webhook.exception.AbortException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -165,11 +164,6 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
       Request newRequest;
       try {
         newRequest = middleManProcessor.handleWebhookRequest(requestEntries, httpClient);
-      } catch (AbortException e){
-        log.warn("abort exception.", e);
-        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.OK_200);
-        asyncContext.complete();
-        return;
       } catch (Exception e) {
         log.warn("handle webhook request with exception. [requests='{}']", requestEntries);
         log.warn("exception detail", e);
@@ -181,6 +175,12 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
       if (newRequest == null) {
         log.warn("request is null. [requests='{}']", requestEntries);
         ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        asyncContext.complete();
+        return;
+      }
+
+      if (newRequest.getHeaders().contains("Skip-Request", "True")) {
+        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.OK_200);
         asyncContext.complete();
         return;
       }
