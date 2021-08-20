@@ -82,6 +82,9 @@ public class SfWebhookRequestEntry {
     Integer sfPlanStrategyId;
     Integer sfStrategyUnitId;
     String sfPlanType;
+    Integer sfChannelId;
+    String sfChannelCategory;
+    Long sfEnterPlanTime;
   }
 }
 
