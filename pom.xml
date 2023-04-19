@@ -31,7 +31,7 @@
     <groupId>com.sensorsdata.focus</groupId>
     <name>webhook-helper</name>
     <artifactId>webhook-helper</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <description>Sensors Focus Webhook Helper</description>
     <url>http://sensorsdata.cn</url>
 
@@ -209,11 +209,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>oss</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </snapshotRepository>
                 <repository>
                     <id>oss</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
             <build>
