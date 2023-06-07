@@ -87,6 +87,7 @@ public class SfWebhookRequestEntry {
     Long sfEnterPlanTime;
     String sfPlanVersion;
     Integer sfComponentId;
+    Long sfSendTime;
   }
 }
 
