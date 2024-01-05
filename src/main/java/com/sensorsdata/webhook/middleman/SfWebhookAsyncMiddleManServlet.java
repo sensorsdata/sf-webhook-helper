@@ -128,6 +128,13 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
       }
 
       byte[] requestBodyBytes = receiveBuffer.toByteArray();
+      if (!SfUtils.checkSignature((HttpServletRequest) asyncContext.getRequest(), requestBodyBytes,
+              secretTokenForSignatureCheck)) {
+        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.FORBIDDEN_403);
+        asyncContext.complete();
+        return;
+      }
+
       if (isGzip) {
         try (GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(requestBodyBytes))) {
           requestBodyBytes = IO.readBytes(gzip);
@@ -137,13 +144,6 @@ public class SfWebhookAsyncMiddleManServlet extends HttpServlet {
           asyncContext.complete();
           return;
         }
-      }
-
-      if (!SfUtils.checkSignature((HttpServletRequest) asyncContext.getRequest(), requestBodyBytes,
-          secretTokenForSignatureCheck)) {
-        ((HttpServletResponse) asyncContext.getResponse()).setStatus(HttpStatus.FORBIDDEN_403);
-        asyncContext.complete();
-        return;
       }
 
       List<SfWebhookRequestEntry> requestEntries;

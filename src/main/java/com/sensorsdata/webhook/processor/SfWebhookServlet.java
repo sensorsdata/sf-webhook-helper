@@ -62,6 +62,10 @@ public class SfWebhookServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
     byte[] requestBodyBytes;
     try {
+      if (!SfUtils.checkSignature(req, IO.readBytes(req.getInputStream()), secretTokenForSignatureCheck)) {
+        resp.setStatus(HttpStatus.FORBIDDEN_403);
+        return;
+      }
       // 判断请求是否通过 Gzip 压缩
       if ("application/octet-stream".equals(req.getContentType())) {
         requestBodyBytes = IO.readBytes(new GZIPInputStream(req.getInputStream()));
@@ -74,11 +78,6 @@ public class SfWebhookServlet extends HttpServlet {
     } catch (IOException e) {
       log.warn("can't read input stream.", e);
       resp.setStatus(HttpStatus.BAD_REQUEST_400);
-      return;
-    }
-
-    if (!SfUtils.checkSignature(req, requestBodyBytes, secretTokenForSignatureCheck)) {
-      resp.setStatus(HttpStatus.FORBIDDEN_403);
       return;
     }
 
