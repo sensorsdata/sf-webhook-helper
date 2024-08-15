@@ -47,6 +47,11 @@ public class SfWebhookRequestEntry {
    */
   Map<String, String> params;
 
+  /**
+   * 计划、画布相关信息
+   */
+  PlanInfo planInfo;
+
 
   /**
    * 发送 ID
@@ -88,6 +93,36 @@ public class SfWebhookRequestEntry {
     String sfPlanVersion;
     Integer sfComponentId;
     Long sfSendTime;
+  }
+
+  @Data
+  public static class PlanInfo {
+
+    /**
+     * 计划、画布名称
+     */
+    String cname;
+
+    /**
+     * 类型
+     */
+    String type;
+
+    /**
+     * 定时单次、定时重复、触发型
+     */
+    String scheduleType;
+
+    /**
+     * 结束时间
+     */
+    Long finishTime;
+
+    /**
+     * 新画布组件名称
+     */
+    String componentCname;
+
   }
 }
 
