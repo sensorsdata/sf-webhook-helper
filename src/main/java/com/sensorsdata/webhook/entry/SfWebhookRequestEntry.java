@@ -48,15 +48,14 @@ public class SfWebhookRequestEntry {
   Map<String, String> params;
 
   /**
-   * 计划、画布相关信息
-   */
-  PlanInfo planInfo;
-
-
-  /**
    * 发送 ID
    */
   String sendId;
+
+  /**
+   * 计划、画布相关信息
+   */
+  PlanInfo planInfo;
 
   /**
    * 用户的 ID 信息
