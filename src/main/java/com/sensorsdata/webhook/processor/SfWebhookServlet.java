@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,16 +62,15 @@ public class SfWebhookServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
     byte[] requestBodyBytes;
     try {
-      ServletInputStream inputStream = req.getInputStream();
-      if (!SfUtils.checkSignature(req, IO.readBytes(inputStream), secretTokenForSignatureCheck)) {
-        resp.setStatus(HttpStatus.FORBIDDEN_403);
-        return;
-      }
       // 判断请求是否通过 Gzip 压缩
       if ("application/octet-stream".equals(req.getContentType())) {
-        requestBodyBytes = IO.readBytes(new GZIPInputStream(inputStream));
+        requestBodyBytes = IO.readBytes(new GZIPInputStream(req.getInputStream()));
       } else {
-        requestBodyBytes = IO.readBytes(inputStream);
+        requestBodyBytes = IO.readBytes(req.getInputStream());
+      }
+      if (!SfUtils.checkSignature(req, requestBodyBytes, secretTokenForSignatureCheck)) {
+        resp.setStatus(HttpStatus.FORBIDDEN_403);
+        return;
       }
       if (requestBodyBytes == null || requestBodyBytes.length == 0) {
         throw new IOException("request body is blank");
