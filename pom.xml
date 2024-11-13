@@ -31,7 +31,7 @@
     <groupId>com.sensorsdata.focus</groupId>
     <name>webhook-helper</name>
     <artifactId>webhook-helper</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.8</version>
     <description>Sensors Focus Webhook Helper</description>
     <url>http://sensorsdata.cn</url>
 
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.19.v20190610</version>
+            <version>9.4.56.v20240826</version>
         </dependency>
 
         <dependency>
@@ -90,13 +90,13 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-proxy</artifactId>
-            <version>9.4.19.v20190610</version>
+            <version>9.4.56.v20240826</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.19.v20190610</version>
+            <version>9.4.56.v20240826</version>
         </dependency>
 
         <dependency>
