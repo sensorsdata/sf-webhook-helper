@@ -122,6 +122,10 @@ public class SfWebhookRequestEntry {
      */
     String componentCname;
 
+    /**
+     * 触发业务 ID
+     */
+    String strategyBizId;
   }
 }
 

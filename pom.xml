@@ -31,7 +31,7 @@
     <groupId>com.sensorsdata.focus</groupId>
     <name>webhook-helper</name>
     <artifactId>webhook-helper</artifactId>
-    <version>0.2.8</version>
+    <version>0.2.9</version>
     <description>Sensors Focus Webhook Helper</description>
     <url>http://sensorsdata.cn</url>
 
