@@ -144,9 +144,9 @@
                             </transformers>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>javax.servlet:*</exclude>
                                     <exclude>org.slf4j:*</exclude>
                                     <exclude>org.eclipse.jetty:*</exclude>
+                                    <exclude>javax.servlet:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <relocations>
